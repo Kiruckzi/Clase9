@@ -33,7 +33,7 @@ class Ventana1(QMainWindow):
         self.setFixedWidth(self.ancho)
 
         self.fondo = QLabel(self)
-        self.imagenFondo = QPixmap('imagenes/img.png')
+        self.imagenFondo = QPixmap('imagenes/img_2.png')
 
         self.fondo.setPixmap(self.imagenFondo)
 
