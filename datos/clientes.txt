@@ -1,1 +1,2 @@
-juanpa;kiru;123;345;juar;1;2;3;4;5;6
+JUAN;kiru;123;1025;kirsa;color;morado;comida;cereal;one;piece
+juan;kiruzk;345;102564;juanpar;comida;cereal;color;morado;equipo;medellin
