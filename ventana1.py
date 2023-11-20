@@ -326,6 +326,10 @@ class Ventana1(QMainWindow):
 
     def accion_botonRegistrar(self):
 
+        self.datosCorrectos = True
+
+
+
 
 
 
@@ -391,6 +395,9 @@ class Ventana1(QMainWindow):
 
 
     def accion_botonBuscar(self):
+
+        self.datosCorrectos = True
+        
         self.ventanaDialogo.setWindowTitle("Buscar preguntas de validacion")
 
         if(
