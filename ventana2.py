@@ -165,11 +165,11 @@ class Ventana2(QMainWindow):
         # Hacemos el boton para continuar
         self.botonVolver = QPushButton("Volver")
         # Establecemos el ancho del boton
-        self.botonVolver.setFixedWidth(100)
+        self.botonVolver.setFixedWidth(120)
         # Le ponemos los estilos
-        self.botonVolver.setStyleSheet("background-color: #008845;"
-                                       "color: #FFFFFF;"
-                                       "padding: 10px;"
+        self.botonVolver.setStyleSheet("background-color: #008762;"
+                                       "color: #FF5FFF;"
+                                       "padding: 30px;"
                                        "margin-top: 10px;")
 
         self.botonVolver.clicked.connect(self.accion_botonVolver)
