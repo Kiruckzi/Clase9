@@ -87,9 +87,7 @@ class Ventana1(QMainWindow):
 
         self.ladoIzquierdo.addRow(self.letrero2)
 
-        self.nombreCompleto = QLineEdit()
-        self.nombreCompleto.setFixedWidth(250)
-        self.ladoIzquierdo.addRow("Nombre completo*", self.nombreCompleto)
+
 
         self.usuario = QLineEdit()
         self.usuario.setFixedWidth(250)
