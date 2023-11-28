@@ -1,11 +1,14 @@
 import math
+import sys
 
-from PyQt5 import QtGui
-from PyQt5.QtGui import QPixmap, QFont
-from PyQt5.QtWidgets import QMainWindow, QDesktopWidget, QLabel, QVBoxLayout, QScrollArea, QWidget, QGridLayout, \
-    QButtonGroup, QPushButton
+from PyQt5.QtGui import QIcon, QPixmap, QFont
+from PyQt5.QtWidgets import QMainWindow, QLabel, QHBoxLayout, QApplication, QScrollArea, QWidget, QGridLayout, \
+    QVBoxLayout, QButtonGroup, QPushButton
 
 from cliente import Cliente
+from ventana3 import Ventana3
+
+from ventana4 import Ventana4
 
 
 class Ventana2(QMainWindow):
@@ -13,197 +16,231 @@ class Ventana2(QMainWindow):
     def __init__(self, parent=None):
         super(Ventana2, self).__init__(parent)
 
-        # poner el titulo
-        self.setWindowTitle("Usuarios Registrados")
 
-        # Ponemos el icono
-        self.setWindowIcon(QtGui.QIcon('imagenes/icono.png'))
 
-        # Establecemos las propiedades de ancho por alto
+
+        #self.ventanaAnterior = anterior
+
+        self.setWindowTitle("Usuarios registrados")
+
+        # Poner el icono
+        self.setWindowIcon(QIcon('imagenes/cliente.jpg'))
+
+        # Establecemos ancho y alto
         self.ancho = 900
         self.alto = 600
 
-
-
-
-
-        # Establecemos el tamaño de la venata
+        # Establecemos el tamaño de la ventana
         self.resize(self.ancho, self.alto)
 
-
-
-        # Centrar la ventana en la pantalla
-        self.pantalla = self.frameGeometry()
-        self.centro = QDesktopWidget().availableGeometry().center()
-        self.pantalla.moveCenter(self.centro)
-        self.move(self.pantalla.topLeft())
-
-        # Fijar el tamaño de la ventana para evitar cambiarlo
+        # Para que no se pueda mover el tamaño de la ventana
+        # Se fija el ancho y el alto
         self.setFixedWidth(self.ancho)
         self.setFixedHeight(self.alto)
 
-        # Establecemos el fondo principal
-        self.fondo = QLabel(self)
-        # Definimos la imagen de fondo
-        self.imagenFondo = QPixmap('imagenes/img.png')
-        # Definimos la iamgen de fondo
-        self.fondo.setPixmap(self.imagenFondo)
-        # Establecemos el modo para escalar la imagen
-        self.fondo.setScaledContents(True)
-        # Hacemos que se adapte al tamaño de la imagen
-        self.resize(self.imagenFondo.width(), self.imagenFondo.height())
-        # Establecemos la ventana de fondo como ventana central
-        self.setCentralWidget(self.fondo)
+        # Imagen de fondo
+        self.imagen = QLabel(self)
+        self.imagenPantalla = QPixmap('imagenes/img_2.png')
 
-        # distribucion de los elementos
+        # Establecemos el modo para escalar la imagen
+        self.imagen.setPixmap(self.imagenPantalla)
+        self.imagen.setScaledContents(True)
+
+        # El tamaño de la imagen se adapta al tamaño de su contenedor
+        self.resize(self.imagen.width(), self.imagen.height())
+
+        # Establecemos la ventana imagen como la ventana central
+        self.setCentralWidget(self.imagen)
+
+        # Establecemos un layout
         self.vertical = QVBoxLayout()
 
         self.letrero1 = QLabel()
-        self.letrero1.setText("Ver los usuarios registrados")
-        self.letrero1.setFont(QFont("Times New Roman", 20))
-        self.letrero1.setStyleSheet('color: #EFEFEF')
+        self.letrero1.setText("Usuarios registrados")
+        self.letrero1.setFont(QFont("Andale Mono", 20))
+        self.letrero1.setStyleSheet("color : blue;")
+
+
+
+
+
         self.vertical.addWidget(self.letrero1)
+
         self.vertical.addStretch()
 
-        # creamos un scroll
         self.scrollArea = QScrollArea()
+
         self.scrollArea.setStyleSheet('background-color: transparent;')
+
         self.scrollArea.setWidgetResizable(True)
 
-        # creamos una ventana contenedora para cada celda
+
+
+
+        # crea ventana contenedora para cada celda
         self.contenedora = QWidget()
-        # creamos un latout de grid para poner la cuadricula de elemento
+
+
+
         self.cuadricula = QGridLayout(self.contenedora)
-        # metemos la cuadricula en el scroll
+
         self.scrollArea.setWidget(self.contenedora)
-        # metemos el layout vertical en el scroll
+
         self.vertical.addWidget(self.scrollArea)
 
-        # abrimos el archivo en modo lectura
+        # abrimos el archivo de lectura
         self.file = open('datos/clientes.txt', 'rb')
-        # creamos una lista vacia para guardar todos los usuarios
-        usuarios = []
 
-        while self.file:
+        # lista vacia para guardar usuarios
+        self.usuarios = []
+
+        contador = 0
+        while self.file and contador < 10:
+            # recorremos el archivo, linea por linea
             linea = self.file.readline().decode('UTF-8')
+            print(linea)
+            contador += 1
 
-            # obtenemos del string una lista de 11 datos separados por ;
-            lista = linea.split(";")
-            # para pausar si ya no hay mas registros en el archivo
+            lista = linea.split(';')
             if linea == '':
                 break
+            u = Cliente(
+                lista[0], lista[1], lista[2], lista[3], lista[4], lista[5], lista[6], lista[7], lista[8], lista[9],
+                lista[10])
 
-            # creamos un objeto tipo cliente llamado u
-            u = Cliente(lista[0], lista[1], lista[2], lista[3], lista[4], lista[5], lista[6], lista[7], lista[8],
-                        lista[9], lista[10], )
-
-            # metemos el objeto en la lista de usuarios
-            usuarios.append(u)
+            self.usuarios.append(u)
 
         self.file.close()
 
-        # obtenemos el numero de usuarios registrados
-        self.numeroUsuarios = len(usuarios)
+        # tenemos la lista usuarios con todos los usuarios
 
-        # variable contadora para controlar los usuarios en la lista usuarios
+        self.numeroUsuarios = len(self.usuarios)
+
         self.contador = 0
 
-        # definimos la cantidad de elementos por columna
+        # definimos la cantidad de elementos para mostrar por columna
         self.elementosPorColumna = 3
 
-        # calulamos el numero de pasteles
+        # calculamos el # de filas
         self.numeroFilas = math.ceil(self.numeroUsuarios / self.elementosPorColumna) + 1
 
-        # controlamos los votones por una variable
+        # controlamos todos lo botones por variable
         self.botones = QButtonGroup()
 
-        # definimos que  el controlador de los botones debe agrupar a todos los botones internos
+        # definimos el controlador de botones
+        # debe agrupar a todos lo botones internos
         self.botones.setExclusive(False)
 
         for fila in range(1, self.numeroFilas):
-            for columna in range(1, self.elementosPorColumna + 1):
+            for columna in range(self.elementosPorColumna + 1):
 
-                # validamos que se ingrese la candiad de usuarios correctos
+                # Validamos que se estan ingresando la cantidad de usuarios correcya:
                 if self.contador < self.numeroUsuarios:
-                    # en cada celda de la cuadricula va una ventana
+                    # en cada celda de la cuadricula de la ventana:
                     self.ventanaAuxiliar = QWidget()
-                    # determinar el ancho y el alto
+
+                    # Se determina el alto y ancho:
                     self.ventanaAuxiliar.setFixedHeight(100)
                     self.ventanaAuxiliar.setFixedWidth(200)
 
-                    # creamos un layour vertical para cada cuadricula
+                    # Creamos un layout vertical para cada elemento de la cuadricula
                     self.verticalCuadricula = QVBoxLayout()
 
-                    # creamos un voton por cada usuario mostrando su cedula
-                    self.botonAccion = QPushButton(usuarios[self.contador].documento)
-                    # ponemos el ancho de la galleta
+                    # Creamos un boton por cada usuario mostrando la cédula:
+                    self.botonAccion = QPushButton(self.usuarios[self.contador].documento)
+
+                    # Establecemos el ancho del botón
                     self.botonAccion.setFixedWidth(150)
-                    # ponemos sabor a la calleta
-                    self.botonAccion.setStyleSheet("background-color: #EFEFEF;"
-                                                   "color: black;"
-                                                   "padding: 10px")
-                    # metemos el boton en el layout vertical para que se vea
+                    # Estilo del botón
+                    self.botonAccion.setStyleSheet("background-color: #3164f4;"
+                                                   "color: #FFFFFF;"
+                                                   "padding: 10px;")
+                    # Agregamos el layout al layout para que se vea
                     self.verticalCuadricula.addWidget(self.botonAccion)
 
-                    # agregamos el boton al grupo con su cedula como id
-                    self.botones.addButton(self.botonAccion, int(usuarios[self.contador].documento))
+                    # Agregamos el boton al grupo, su cédula como ID:
+                    self.botones.addButton(self.botonAccion, int(self.usuarios[self.contador].documento))
 
+                    # Agregamos un espacio en blanco
                     self.verticalCuadricula.addStretch()
 
-                    # a la ventana le asignamos el layout vertical
+                    # A la ventana le asignamos el layout vertical:
                     self.ventanaAuxiliar.setLayout(self.verticalCuadricula)
 
-                    # a la cuadricula le agregamos la ventana en la fila y columnna actual
+                    # A la ventana le asignamos el layout vertical:
                     self.cuadricula.addWidget(self.ventanaAuxiliar, fila, columna)
 
-                    # aumentamos el contador
+                    # Aumentamos el contador
                     self.contador += 1
 
-        # establecemos el metodo para que funcionene todos los postres
         self.botones.idClicked.connect(self.metodo_accionBotones)
 
-        # Hacemos el boton para continuar
-        self.botonVolver = QPushButton("Volver")
-        # Establecemos el ancho del boton
-        self.botonVolver.setFixedWidth(120)
-        # Le ponemos los estilos
-        self.botonVolver.setStyleSheet("background-color: #008762;"
-                                       "color: #FF5FFF;"
-                                       "padding: 30px;"
-                                       "margin-top: 10px;")
+        # -------------------- BOTÓN TABULAR----------------------
+        self.botonFormaTabular = QPushButton("Forma tabular")
 
-        self.botonVolver.clicked.connect(self.accion_botonVolver)
-        # Agregamos el boton
-        self.vertical.addWidget(self.botonVolver)
-
-        # Hacemos el boton para continuar
-        self.botonFormaTabular = QPushButton("Forma Tabular")
-        # Establecemos el ancho del boton
-        self.botonFormaTabular.setFixedWidth(100)
-        # Le ponemos los estilos
-        self.botonFormaTabular.setStyleSheet("background-color: #008845;"
+        # Establecemos el ancho del botón
+        self.botonFormaTabular.setFixedWidth(110)
+        # Le ponemos estilos
+        self.botonFormaTabular.setStyleSheet("background-color: #3164f4;"
                                              "color: #FFFFFF;"
                                              "padding: 10px;"
-                                             "margin-top: 20px;")
+                                             "margin-top: 10px;")
 
-        self.botonFormaTabular.clicked.connect(self.accion_botonFormaTabular)
-        # Agregamos los dos botones al layout ladoIzquierdo
+        self.botonFormaTabular.clicked.connect(self.metodo_botonFormaTabular)
+
+        # Agregaos el botón al layout
         self.vertical.addWidget(self.botonFormaTabular)
 
-        # poner al final
-        self.fondo.setLayout(self.vertical)
+        # -------------------- BOTÓN VOLVER ----------------------
+        self.botonVolver = QPushButton("Volver")
+
+        # Establecemos el ancho del botón
+        self.botonVolver.setFixedWidth(110)
+        # Le ponemos estilos
+        self.botonVolver.setStyleSheet("background-color: #3164f4;"
+                                       "color: #FFFFFF;"
+                                       "padding: 10px;"
+                                       "margin-top: 10px;")
+
+        self.botonVolver.clicked.connect(self.metodo_botonVolver)
+
+        # Agregaos el botón al layout
+        self.vertical.addWidget(self.botonVolver)
+
+        # ------------------- PONER AL FINAL --------------------
+
+        self.imagen.setLayout(self.vertical)
+
+        # Metodo para controlar las acciones de los botones
 
     def metodo_accionBotones(self, cedulaUsuario):
-        print(cedulaUsuario)
+        #print(cedulaUsuario)
+        self.hide()
+        self.ventana4 = Ventana4(self, cedulaUsuario)
+        self.ventana4.show()
 
-    def accion_botonVolver(self):
+
+    def metodo_botonVolver(self):
         from ventana1 import Ventana1
         self.hide()
         self.ventana1 = Ventana1()
         self.ventana1.show()
 
-    def accion_botonFormaTabular(self):
-        from ventana3 import Ventana3
+    def metodo_botonFormaTabular(self):
         self.hide()
-        self.ventana3 = Ventana3()
+        self.ventana3 = Ventana3(self)
         self.ventana3.show()
+
+        # Hacer que la aplicación se genere
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+
+    # Crar un objeto de tipo Ventana1 con el nombre ventana 1
+    ventana2 = Ventana2()
+
+    # Hacer que el objeto se muestre
+    ventana2.show()
+
+    sys.exit(app.exec_())
